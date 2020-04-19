@@ -4,6 +4,13 @@
   </div>
 </template>
 <script>
+const COLORS = {
+  inhale: 'rgb(112, 206, 255)',
+  exhale: 'rgb(189, 232, 255)',
+  hold: 'rgb(90, 164, 204)'
+}
+const actionToColor = (action) => COLORS[action] || COLORS.inhale
+
 export default {
   props: {
     arcs: {
@@ -17,7 +24,7 @@ export default {
   },
   computed: {
     radius() {
-      return this.canvas.width * 0.45 // radius is 45% of circle width
+      return this.canvas.width * 0.42 // radius is 42% of circle width
     }
   },
   watch: {
@@ -54,10 +61,7 @@ export default {
 
       this.drawCursor(this.cursor)
     },
-    drawArc(
-      arc,
-      { radius = this.radius, width = 15, color = 'lightSkyBlue' } = {}
-    ) {
+    drawArc(arc, { radius = this.radius, width = 15 } = {}) {
       this.ctx.beginPath()
       this.ctx.arc(
         this.center.x,
@@ -67,7 +71,7 @@ export default {
         arc.end * Math.PI
       )
       this.ctx.lineWidth = width
-      this.ctx.strokeStyle = this.getBreatheColor(arc.action) || color
+      this.ctx.strokeStyle = actionToColor(arc.action)
       this.ctx.stroke()
 
       this.ctx.closePath()
@@ -76,31 +80,16 @@ export default {
     drawArcs(arcs) {
       arcs.map(this.drawArc)
     },
-    drawCursor({
-      x,
-      y,
-      radius = 15,
-      color = 'rgba(255, 255, 255, .9)',
-      width = 1,
-      borderColor = 'rgba(0, 0, 0, .3)'
-    }) {
+
+    drawCursor({ x, y }) {
       this.ctx.beginPath()
-      this.ctx.arc(x, y, radius, 0, 2 * Math.PI)
-      this.ctx.fillStyle = color
+      this.ctx.arc(x, y, 15, 0, 2 * Math.PI)
+      this.ctx.fillStyle = 'rgba(255, 255, 255, .8)'
       this.ctx.fill()
-      this.ctx.lineWidth = width
-      this.ctx.strokeStyle = borderColor
+      this.ctx.lineWidth = 1
+      this.ctx.strokeStyle = 'rgba(45, 55, 72, .3)'
       this.ctx.stroke()
       this.ctx.closePath()
-    },
-    getBreatheColor(action) {
-      const breatheColors = {
-        inhale: 'lightSkyBlue',
-        exhale: 'lightBlue',
-        hold: 'royalBlue'
-      }
-
-      return breatheColors[action]
     }
   }
 }

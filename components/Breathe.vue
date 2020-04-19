@@ -9,9 +9,11 @@
       seconds
       <!-- Turns {{ turns }} -->
     </div>
-    <button class="" @click="isConfigVisible = !isConfigVisible">
-      {{ isConfigVisible ? 'Hide configuration' : 'Configure' }}
-    </button>
+    <div class="border-t-2 border-gray-200 pt-4">
+      <button class="text-gray-700" @click="isConfigVisible = !isConfigVisible">
+        {{ isConfigVisible ? 'Hide configuration' : 'Configure' }}
+      </button>
+    </div>
     <Configuration
       v-if="isConfigVisible"
       :config="config"
@@ -52,7 +54,7 @@ export default {
       return this.config?.filter((step) => step.duration)
     },
     currentStep() {
-      return this.configuration[this.stepIndex]
+      return this.configuration[this.stepIndex] || this.configuration[0]
     },
     totalDuration() {
       return this.configuration.reduce(
