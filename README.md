@@ -2,7 +2,29 @@
 
 > Feel better, every breathe matters
 
-## Build Setup
+<small>You can see a live version at: https://breathe.luseeds.com</small>
+
+![](./screenshot.png)
+
+## About
+
+:warning: This is still a WIP project. Any help/contribution/PR is highly appreciated.
+
+---
+
+Our daily lives are full of a constant flow of information, thoughts, feelings.
+We feel like time is flying away and we're not in control.
+
+What if, for a short moment, we take control back.
+This is where Breathe comes in.
+Just settle down for a moment, relax and breathe!
+
+Be in the present moment, that's all that matters.
+Simply breathe.
+
+## Build setup
+
+For detailed explanation on how things work, check out [Nuxt.js docs](https://nuxtjs.org).
 
 ```bash
 # install dependencies
@@ -19,4 +41,8 @@ $ npm run start
 $ npm run generate
 ```
 
-For detailed explanation on how things work, check out [Nuxt.js docs](https://nuxtjs.org).
+This website is hosted on [Netlify](https://netlify.com)
+
+---
+
+A project from [luseeds](https://luseeds.com)
