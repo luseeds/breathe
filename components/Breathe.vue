@@ -1,14 +1,22 @@
 <template>
-  <div class="breathe">
+  <div class="breathe mt-8">
     <Viewer :arcs="arcs" :diff="diff" />
-    <div class="text-2xl font-bold my-16">
+    <div class="text-xl text-gray-700 my-16">
       <span class="capitalize">{{ currentStep.action }}</span> for
-      <span class="bg-teal-500 text-white p-4 py-2">{{
-        currentStep.duration
+      <span class="bg-blue-300 text-blue-800 p-2 px-3 rounded">{{
+        remainingStepSeconds
       }}</span>
       seconds
+      <!-- Turns {{ turns }} -->
     </div>
-    <Configuration :config="config" :current-step="step" />
+    <button class="" @click="isConfigVisible = !isConfigVisible">
+      {{ isConfigVisible ? 'Hide configuration' : 'Configure' }}
+    </button>
+    <Configuration
+      v-if="isConfigVisible"
+      :config="config"
+      :current-step="stepIndex"
+    />
   </div>
 </template>
 <script>
@@ -31,64 +39,78 @@ export default {
   },
   data() {
     return {
-      step: 0,
+      isConfigVisible: false,
+      stepIndex: 0,
       diff: 0,
-      lastDraw: 0,
-      config: [...BREATHE_PRESETS.default]
+      turns: 0,
+      config: [...BREATHE_PRESETS.default],
+      remainingStepSeconds: BREATHE_PRESETS.default[0].duration
     }
   },
   computed: {
-    currentStep() {
-      return this.config?.[this.step]
+    configuration() {
+      return this.config?.filter((step) => step.duration)
     },
-    arcs() {
-      // do logic of converting config into drawable arcs
-      const totalLength = this.config?.reduce(
+    currentStep() {
+      return this.configuration[this.stepIndex]
+    },
+    totalDuration() {
+      return this.configuration.reduce(
         (total, step) => (step.duration || 0) + total,
         0
       )
+    },
+    arcs() {
+      // Converts the config into drawable arcs
+      return this.configuration?.reduce((arcs, step) => {
+        const value = step.duration / (this.totalDuration / 2) // /2 is because the circle is 2PI
+        const isFirstArc = arcs.length === 0
+        const start = isFirstArc
+          ? 1.5 // 1.5 * Math.PI so that the first arc starts at the top
+          : arcs[arcs.length - 1].end // starts at the previous step's end
+        arcs.push({ ...step, value, start, end: start + value })
 
-      const slices = this.config
-        ?.map((step) => ({
-          value: (step.duration / totalLength) * 100,
-          action: step.action
-        }))
-        .map((step) => ({ value: (2 / 100) * step.value, action: step.action })) // 2% of the slice (because the circle is 2)
-
-      slices[0].start = 1.5
-      slices[0].end = 1.5 + slices[0].value
-      for (let i = 1; i < slices.length; i++) {
-        slices[i].start = slices[i - 1].end
-        slices[i].end = slices[i - 1].end + slices[i].value
-      }
-
-      return slices
+        return arcs
+      }, [])
     }
   },
   mounted() {
-    this.start = new Date().getTime()
-    this.lastDraw = this.start
-    this.update()
+    this.secondStepCount = 0
+    this.timePreviousSteps = 0
+    requestAnimationFrame(this.update)
   },
   methods: {
-    update() {
-      const time = new Date().getTime()
-      const diff = time - this.start
-      this.diff = time - this.lastDraw
-      this.lastDraw = time
-      let step = this.step
-      if (diff > this.currentStep.duration * 1000) {
-        step++
-        this.start = new Date().getTime()
-        // this.lastDraw = diff
+    update(currentTime) {
+      if (!this.lastStepTime) {
+        this.lastStepTime = currentTime
+      }
+      if (!this.secondTick) {
+        this.secondTick = currentTime
       }
 
-      if (step > this.config.length - 1) {
-        step = 0
+      this.diff =
+        (2 * Math.PI * (currentTime - this.lastStepTime)) /
+          1000 /
+          this.totalDuration +
+        this.timePreviousSteps
+      // 1 second elapsed
+      if (currentTime > this.secondTick + 1000) {
+        this.secondStepCount++
+
+        this.remainingStepSeconds =
+          this.currentStep.duration - this.secondStepCount
+        if (this.remainingStepSeconds === 0) {
+          this.secondStepCount = 0
+          this.lastStepTime = 0
+          const isLastStep = this.stepIndex === this.configuration.length - 1
+          this.timePreviousSteps = isLastStep ? 0 : this.diff
+          this.stepIndex = isLastStep ? 0 : this.stepIndex + 1
+          isLastStep && this.turns++
+          this.remainingStepSeconds = this.currentStep.duration
+        }
+        this.secondTick = currentTime
       }
-      if (this.step !== step) {
-        this.step = step
-      }
+
       requestAnimationFrame(this.update)
     }
   }
@@ -96,16 +118,6 @@ export default {
 </script>
 <style>
 .breathe {
-  animation: 3s appear;
-  margin: auto;
-}
-
-@keyframes appear {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
+  animation: 1s appear;
 }
 </style>

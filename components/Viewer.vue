@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <canvas ref="canvas" width="800" height="400"></canvas>
+  <div class="mt-4">
+    <canvas ref="canvas" class="mx-auto" width="300" height="300"></canvas>
   </div>
 </template>
 <script>
@@ -13,6 +13,11 @@ export default {
     diff: {
       type: Number,
       default: 0
+    }
+  },
+  computed: {
+    radius() {
+      return this.canvas.width * 0.45 // radius is 45% of circle width
     }
   },
   watch: {
@@ -31,23 +36,28 @@ export default {
       x: 0,
       y: 0
     }
-    this.angle = 1.5 * Math.PI
   },
   methods: {
     draw() {
       // Background
-      this.ctx.fillStyle = 'lavender'
+      this.ctx.fillStyle = 'white'
       this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height)
 
+      // Arcs
       this.drawArcs(this.arcs)
-      this.angle += (this.diff * 0.0005) % (2 * Math.PI)
 
-      this.cursor.x = this.center.x + 180 * Math.cos(this.angle)
-      this.cursor.y = this.center.y + 180 * Math.sin(this.angle)
+      this.angle = 1.5 * Math.PI + this.diff // % (2 * Math.PI)
+
+      // Cursor
+      this.cursor.x = this.center.x + this.radius * Math.cos(this.angle)
+      this.cursor.y = this.center.y + this.radius * Math.sin(this.angle)
 
       this.drawCursor(this.cursor)
     },
-    drawArc(arc, { radius = 180, width = 15, color = 'lightSkyBlue' } = {}) {
+    drawArc(
+      arc,
+      { radius = this.radius, width = 15, color = 'lightSkyBlue' } = {}
+    ) {
       this.ctx.beginPath()
       this.ctx.arc(
         this.center.x,
