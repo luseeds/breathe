@@ -8,7 +8,7 @@
         <breathe />
       </div>
     </div>
-    <div class="my-8 px-4 mx-auto max-w-xl text-justify text-gray-600">
+    <div class="my-8 px-4 mx-auto max-w-xl text-justify text-gray-700">
       Our daily lives are full of a constant flow of information, thoughts,
       feelings. We feel like time is flying away and we're not in control. What
       if, for a short moment, we take control back. This is where Breathe comes
