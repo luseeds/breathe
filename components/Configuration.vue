@@ -14,9 +14,9 @@
           id="presets"
           v-model="selectedPreset"
           class="block appearance-none w-full bg-gray-200 border-2 border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
-          @change="$emit('config-updated', steps)"
+          @change="configUpdated"
         >
-          <option v-for="preset in presets" :key="preset.name" :value="preset">
+          <option v-for="(preset, i) in presets" :key="preset.name" :value="i">
             {{ preset.name }}
           </option>
         </select>
@@ -55,8 +55,8 @@
           <input
             :id="`step-${step.key}`"
             v-model.number="step.duration"
-            disabled
-            class="cursor-not-allowed bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full text-center py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
+            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full text-center py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
+            @change="configUpdated"
           />
           <div
             v-if="i !== steps.length - 1"
@@ -73,7 +73,6 @@
 const PRESETS = [
   {
     name: 'Relaxing Breathe',
-    selected: true,
     steps: [
       { action: 'inhale', duration: 4, key: 0 },
       { action: 'hold', duration: 7, key: 1 },
@@ -118,19 +117,24 @@ export default {
     }
   },
   data() {
-    const presets = [...PRESETS]
     return {
-      presets,
-      selectedPreset: presets[0]
+      presets: PRESETS,
+      selectedPreset: 0
     }
   },
   computed: {
     steps() {
-      return this.selectedPreset.steps
+      // Deep copy of array of objects
+      return JSON.parse(JSON.stringify(this.presets[this.selectedPreset].steps))
     }
   },
   mounted() {
-    this.$emit('config-updated', [...this.steps])
+    this.configUpdated()
+  },
+  methods: {
+    configUpdated() {
+      this.$emit('config-updated', this.steps)
+    }
   }
 }
 </script>
