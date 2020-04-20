@@ -2,9 +2,12 @@
   <div class="breathe mt-8">
     <div class="relative">
       <viewer :arcs="arcs" :diff="diff" />
-      <play v-if="!isPlaying" @click.native="play" />
+      <play-toggle :is-playing="isPlaying" @click.native="togglePlay" />
     </div>
-    <div class="text-xl text-gray-700 my-16">
+    <div
+      class="text-xl text-gray-700 my-16"
+      :class="{ 'opacity-0': !isPlaying }"
+    >
       <span class="capitalize">{{ currentStep.action }}</span> for
       <span class="bg-blue-300 text-blue-800 p-2 px-3 rounded">{{
         remainingStepSeconds
@@ -27,7 +30,7 @@
 <script>
 import Configuration from '~/components/Configuration.vue'
 import Viewer from '~/components/Viewer.vue'
-import Play from '~/components/Play.vue'
+import PlayToggle from '~/components/PlayToggle.vue'
 
 const BREATHE_PRESETS = {
   default: [
@@ -41,7 +44,7 @@ const BREATHE_PRESETS = {
 export default {
   components: {
     Configuration,
-    Play,
+    PlayToggle,
     Viewer
   },
   data() {
@@ -87,9 +90,18 @@ export default {
     this.timePreviousSteps = 0
   },
   methods: {
-    play() {
-      requestAnimationFrame(this.update)
+    togglePlay() {
       this.isPlaying = !this.isPlaying
+      requestAnimationFrame(this.update)
+
+      // Reset to default values
+      this.lastStepTime = null
+      this.secondTick = null
+      this.secondStepCount = 0
+      this.timePreviousSteps = 0
+      this.stepIndex = 0
+      this.turns = 0
+      this.remainingStepSeconds = this.currentStep.duration
     },
     update(currentTime) {
       if (!this.lastStepTime) {
@@ -122,7 +134,7 @@ export default {
         this.secondTick = currentTime
       }
 
-      requestAnimationFrame(this.update)
+      this.isPlaying && requestAnimationFrame(this.update)
     }
   }
 }
