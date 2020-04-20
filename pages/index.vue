@@ -15,6 +15,16 @@
       in. Just settle down for a moment, relax and breathe! Be in the present
       moment, that's all that matters. Simply, breathe.
     </div>
+    <footer
+      class="footer border-t px-6 py-4 text-gray-700 bg-white text-center"
+    >
+      A
+      <a href="https://github.com/luseeds/breathe">project</a>
+      by
+      <a href="https://luseeds.com" class="text-green-800 hover:text-green-500"
+        >luseeds</a
+      >
+    </footer>
   </div>
 </template>
 
