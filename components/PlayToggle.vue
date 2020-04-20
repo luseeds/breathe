@@ -2,7 +2,8 @@
   <button
     class="cursor-pointer absolute"
     :class="{ 'play-button': !isPlaying, 'stop-button': isPlaying }"
-    aria-label="play"
+    :aria-label="isPlaying ? 'Stop' : 'Start'"
+    :title="isPlaying ? 'Stop' : 'Start'"
   >
     <svg
       v-if="!isPlaying"
