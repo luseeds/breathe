@@ -1,8 +1,8 @@
 <template>
   <div>
-    <div class="container">
+    <div class="container mt-2">
       <logo />
-      <h1 class="title mt-4">breathe</h1>
+      <h1 class="title mt-8">breathe</h1>
       <h2 class="subtitle">Feel better, every breathe matters</h2>
       <div>
         <breathe />
