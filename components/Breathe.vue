@@ -1,6 +1,9 @@
 <template>
   <div class="breathe mt-8">
-    <viewer :arcs="arcs" :diff="diff" />
+    <div class="relative">
+      <viewer :arcs="arcs" :diff="diff" />
+      <play v-if="!isPlaying" @click.native="play" />
+    </div>
     <div class="text-xl text-gray-700 my-16">
       <span class="capitalize">{{ currentStep.action }}</span> for
       <span class="bg-blue-300 text-blue-800 p-2 px-3 rounded">{{
@@ -24,6 +27,7 @@
 <script>
 import Configuration from '~/components/Configuration.vue'
 import Viewer from '~/components/Viewer.vue'
+import Play from '~/components/Play.vue'
 
 const BREATHE_PRESETS = {
   default: [
@@ -37,10 +41,12 @@ const BREATHE_PRESETS = {
 export default {
   components: {
     Configuration,
+    Play,
     Viewer
   },
   data() {
     return {
+      isPlaying: false,
       isConfigVisible: false,
       stepIndex: 0,
       diff: 0,
@@ -79,9 +85,12 @@ export default {
   mounted() {
     this.secondStepCount = 0
     this.timePreviousSteps = 0
-    requestAnimationFrame(this.update)
   },
   methods: {
+    play() {
+      requestAnimationFrame(this.update)
+      this.isPlaying = !this.isPlaying
+    },
     update(currentTime) {
       if (!this.lastStepTime) {
         this.lastStepTime = currentTime
