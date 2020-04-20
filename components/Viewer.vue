@@ -20,10 +20,14 @@ export default {
     diff: {
       type: Number,
       default: 0
+    },
+    action: {
+      type: String,
+      default: ''
     }
   },
   computed: {
-    radius() {
+    baseRadius() {
       return this.canvas.width * 0.42 // radius is 42% of circle width
     }
   },
@@ -57,12 +61,22 @@ export default {
       this.angle = 1.5 * Math.PI + this.diff // % (2 * Math.PI)
 
       // Cursor
+      this.radius = this.radius || this.baseRadius
+      if (this.action === 'inhale' || this.action === 'exhale') {
+        const value = this.action === 'inhale' ? 0.1 : -0.1
+        if (
+          this.radius + value < 1.1 * this.baseRadius &&
+          this.radius + value > 0.9 * this.baseRadius
+        ) {
+          this.radius += value
+        }
+      }
       this.cursor.x = this.center.x + this.radius * Math.cos(this.angle)
       this.cursor.y = this.center.y + this.radius * Math.sin(this.angle)
 
       this.drawCursor(this.cursor)
     },
-    drawArc(arc, { radius = this.radius, width = 15 } = {}) {
+    drawArc(arc, { radius = this.radius || this.baseRadius, width = 15 } = {}) {
       this.ctx.beginPath()
       this.ctx.arc(
         this.center.x,

@@ -1,7 +1,12 @@
 <template>
   <div class="breathe mt-8">
     <div class="relative">
-      <viewer v-if="config" :arcs="arcs" :diff="diff" />
+      <viewer
+        v-if="config"
+        :arcs="arcs"
+        :diff="diff"
+        :action="currentStep && currentStep.action"
+      />
       <play-toggle :is-playing="isPlaying" @click.native="togglePlay" />
     </div>
     <div
