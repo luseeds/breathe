@@ -1,14 +1,15 @@
 <template>
   <div class="breathe mt-8">
     <div class="relative">
-      <viewer :arcs="arcs" :diff="diff" />
+      <viewer v-if="config" :arcs="arcs" :diff="diff" />
       <play-toggle :is-playing="isPlaying" @click.native="togglePlay" />
     </div>
     <div
       class="text-xl text-gray-700 my-16"
       :class="{ 'opacity-0': !isPlaying }"
     >
-      <span class="capitalize">{{ currentStep.action }}</span> for
+      <span class="capitalize">{{ currentStep && currentStep.action }}</span>
+      for
       <span class="bg-blue-300 text-blue-800 p-2 px-3 rounded">{{
         remainingStepSeconds
       }}</span>
@@ -21,9 +22,9 @@
       </button>
     </div>
     <configuration
-      v-if="isConfigVisible"
-      :config="config"
+      v-show="isConfigVisible"
       :current-step="stepIndex"
+      @config-updated="configUpdated"
     />
   </div>
 </template>
@@ -31,15 +32,6 @@
 import Configuration from '~/components/Configuration.vue'
 import Viewer from '~/components/Viewer.vue'
 import PlayToggle from '~/components/PlayToggle.vue'
-
-const BREATHE_PRESETS = {
-  default: [
-    { action: 'inhale', duration: 4, key: 0 },
-    { action: 'hold', duration: 7, key: 1 },
-    { action: 'exhale', duration: 8, key: 2 },
-    { action: 'hold', duration: 0, key: 3 }
-  ]
-}
 
 export default {
   components: {
@@ -54,8 +46,8 @@ export default {
       stepIndex: 0,
       diff: 0,
       turns: 0,
-      config: [...BREATHE_PRESETS.default],
-      remainingStepSeconds: BREATHE_PRESETS.default[0].duration
+      config: null,
+      remainingStepSeconds: 0
     }
   },
   computed: {
@@ -63,7 +55,7 @@ export default {
       return this.config?.filter((step) => step.duration)
     },
     currentStep() {
-      return this.configuration[this.stepIndex] || this.configuration[0]
+      return this.configuration?.[this.stepIndex] || this.configuration?.[0]
     },
     totalDuration() {
       return this.configuration.reduce(
@@ -93,15 +85,7 @@ export default {
     togglePlay() {
       this.isPlaying = !this.isPlaying
       requestAnimationFrame(this.update)
-
-      // Reset to default values
-      this.lastStepTime = null
-      this.secondTick = null
-      this.secondStepCount = 0
-      this.timePreviousSteps = 0
-      this.stepIndex = 0
-      this.turns = 0
-      this.remainingStepSeconds = this.currentStep.duration
+      this.reset()
     },
     update(currentTime) {
       if (!this.lastStepTime) {
@@ -122,7 +106,7 @@ export default {
 
         this.remainingStepSeconds =
           this.currentStep.duration - this.secondStepCount
-        if (this.remainingStepSeconds === 0) {
+        if (this.remainingStepSeconds <= 0) {
           this.secondStepCount = 0
           this.lastStepTime = 0
           const isLastStep = this.stepIndex === this.configuration.length - 1
@@ -135,6 +119,22 @@ export default {
       }
 
       this.isPlaying && requestAnimationFrame(this.update)
+    },
+    reset() {
+      this.lastStepTime = null
+      this.secondTick = null
+      this.secondStepCount = 0
+      this.timePreviousSteps = 0
+      this.stepIndex = 0
+      this.turns = 0
+      this.remainingStepSeconds = this.currentStep.duration
+    },
+    configUpdated(config) {
+      this.config = config
+      this.reset()
+      // Hacky way to force a redraw
+      // as the Viewer component watch diff for updating the canvas
+      this.diff = this.diff ? 0 : 0.001
     }
   }
 }
