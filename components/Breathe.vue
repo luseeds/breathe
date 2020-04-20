@@ -1,6 +1,6 @@
 <template>
   <div class="breathe mt-8">
-    <Viewer :arcs="arcs" :diff="diff" />
+    <viewer :arcs="arcs" :diff="diff" />
     <div class="text-xl text-gray-700 my-16">
       <span class="capitalize">{{ currentStep.action }}</span> for
       <span class="bg-blue-300 text-blue-800 p-2 px-3 rounded">{{
@@ -14,7 +14,7 @@
         {{ isConfigVisible ? 'Hide configuration' : 'Configure' }}
       </button>
     </div>
-    <Configuration
+    <configuration
       v-if="isConfigVisible"
       :config="config"
       :current-step="stepIndex"
@@ -120,6 +120,6 @@ export default {
 </script>
 <style>
 .breathe {
-  animation: 1s appear;
+  animation: 2s appear;
 }
 </style>

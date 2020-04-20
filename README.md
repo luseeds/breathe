@@ -1,3 +1,7 @@
+<p align="center">
+  <img width="100" src="./assets/logo.png">
+</p>
+
 # breathe
 
 > Feel better, every breathe matters
@@ -41,7 +45,8 @@ $ npm run start
 $ npm run generate
 ```
 
-This website is hosted on [Netlify](https://netlify.com)
+This website is hosted on [Netlify](https://netlify.com)  
+The logo icon is an adaptation of <a href="https://www.flaticon.com/free-icon/paint_1165817" title="Freepik">Freepik</a> on <a href="https://www.flaticon.com/" title="Flaticon"> www.flaticon.com</a>
 
 ---
 
