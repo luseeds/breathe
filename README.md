@@ -47,6 +47,7 @@ $ npm run generate
 
 This website is hosted on [Netlify](https://netlify.com)  
 The logo icon is an adaptation of <a href="https://www.flaticon.com/free-icon/paint_1165817" title="Freepik">Freepik</a> on <a href="https://www.flaticon.com/" title="Flaticon"> www.flaticon.com</a>
+Relaxing royalty free background music (Quiet Time) from [FesliyanStudios](https://www.fesliyanstudios.com)
 
 ---
 
