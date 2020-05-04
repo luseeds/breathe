@@ -99,10 +99,17 @@ export default {
       this.isPlaying = !this.isPlaying
       requestAnimationFrame(this.update)
       this.reset()
+      if (!this.isPlaying) {
+        this.turnMusicOff()
+      }
     },
     toggleMusic() {
       this.audioElement[this.audioElement.paused ? 'play' : 'pause']()
       this.isMusicMuted = this.audioElement.paused
+    },
+    turnMusicOff() {
+      this.audioElement.pause()
+      this.isMusicMuted = true
     },
     update(currentTime) {
       if (!this.lastStepTime) {
