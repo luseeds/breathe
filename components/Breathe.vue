@@ -16,6 +16,10 @@
       seconds
       <!-- Turns {{ turns }} -->
     </div>
+    <button class="text-gray-600 mt-0 mb-8" @click="toggleMusic">
+      {{ isMusicMuted ? 'Turn music on' : 'Turn music off' }}
+    </button>
+    <audio ref="audioElement" src="/bg-music.mp3"></audio>
     <div class="border-t-2 border-gray-200 pt-4">
       <button class="text-gray-700" @click="isConfigVisible = !isConfigVisible">
         {{ isConfigVisible ? 'Hide configuration' : 'Configure' }}
@@ -47,7 +51,8 @@ export default {
       diff: 0,
       turns: 0,
       config: null,
-      remainingStepSeconds: 0
+      remainingStepSeconds: 0,
+      isMusicMuted: true
     }
   },
   computed: {
@@ -80,12 +85,24 @@ export default {
   mounted() {
     this.secondStepCount = 0
     this.timePreviousSteps = 0
+    this.audioElement = this.$refs.audioElement
+    this.audioElement.addEventListener(
+      'ended',
+      function() {
+        this.play()
+      },
+      false
+    )
   },
   methods: {
     togglePlay() {
       this.isPlaying = !this.isPlaying
       requestAnimationFrame(this.update)
       this.reset()
+    },
+    toggleMusic() {
+      this.audioElement[this.audioElement.paused ? 'play' : 'pause']()
+      this.isMusicMuted = this.audioElement.paused
     },
     update(currentTime) {
       if (!this.lastStepTime) {
